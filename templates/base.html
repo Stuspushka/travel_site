@@ -1,0 +1,197 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% block title %}
+  <title>ТурФирма</title>
+  {% endblock %}
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Навигация -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+    <div class="container">
+        <a href="{% url 'index' %}"><svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="30" fill="#007BFF" stroke="#ffffff" stroke-width="2"/>
+            <path d="M20 35 L32 20 L44 35 L52 25 L58 35 L32 10 Z" fill="#ffffff"/>
+            <circle cx="32" cy="32" r="3" fill="#00C9A7"/>
+          </svg></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="{% url 'tours' %}">Туры</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews' %}">Отзывы</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'contacts' %}">Контакты</a></li>
+        </ul>
+        {% if user.is_authenticated %}
+          <a href="{% url 'profile' %}" class="btn btn-primary ms-3">Личный кабинет</a>
+        {% else %}
+        <div class="d-flex gap-2">
+          <a href="{% url 'login' %}" class="btn btn-primary me-2">Войти в аккаунт</a>
+          <a href="{% url 'registr' %}" class="btn btn-primary">Создать аккаунт</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+ {% block content %}
+<!-- Баннер -->
+<section class="banner">
+    <div>
+      <h1>Открой мир с нами!</h1>
+      <p>Незабываемые путешествия по лучшим уголкам планеты</p>
+      <a href="#tours" class="btn btn-gradient mt-3 px-4 py-2">Посмотреть туры</a>
+    </div>
+  </section>
+<!-- Популярные туры -->
+<section id="tours" class="py-5">
+  <div class="container">
+    <h2 class="text-center mb-5">Популярные туры</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      {% if tours %}
+      {% for tour in tours %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <img src="{{ tour.image.url }}" class="card-img-top" alt="{{ tour.title }}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ tour.title }}</h5>
+            <p class="card-text flex-grow-1">{{ tour.short_annotation }}</p>
+            <div class="mt-auto">
+              <p class="text-primary fw-bold mb-2">от {{ tour.price }}₽</p>
+              <a href="{% url 'onetour' tour.id %}" class="btn btn-outline-primary w-100">Подробнее</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="container">
+          <h2 class="text-center mb-5">Пока что пусто...</h2>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+<!-- О нас -->
+<section id="about" class="py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+      <h2 class="text-center mb-4 text-primary fw-bold">О нас</h2>
+      <div class="row justify-content-center text-center">
+        <div class="col-md-4 mb-4">
+          <div class="p-4 shadow rounded bg-white h-100 border-top border-4 border-primary">
+            <h5 class="fw-semibold text-dark">Наши ценности</h5>
+            <p class="text-muted">Мы стремимся делать путешествия доступными, безопасными и незабываемыми для каждого клиента.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="p-4 shadow rounded bg-white h-100 border-top border-4 border-success">
+            <h5 class="fw-semibold text-dark">Наш опыт</h5>
+            <p class="text-muted">Более 10 лет мы помогаем людям открывать мир — от пляжных курортов до горных походов.</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="p-4 shadow rounded bg-white h-100 border-top border-4 border-info">
+            <h5 class="fw-semibold text-dark">Поддержка 24/7</h5>
+            <p class="text-muted">Наша команда всегда на связи, чтобы помочь вам на всех этапах путешествия.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<!-- Отзывы -->
+<section class="py-5 bg-light" id="reviews">
+  <div class="container">
+    <h2 class="text-center mb-4">Отзывы наших клиентов</h2>
+    <div class="row g-4">
+      {% for review in reviews %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <p class="card-text flex-grow-1">{{ review.text }}</p>
+            <div class="mt-3">
+
+              <div class="star-rating">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= review.rating %}
+                    <span class="text-warning">&#9733;</span>
+                  {% else %}
+                    <span class="text-secondary">&#9733;</span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+               <p class="text-muted text-center mt-2">— <strong>{{ review.name }}</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}
+
+<!-- Футер -->
+<footer>
+  <div class="container text-center footer">
+    <p>&copy; 2025 ТурФирма. Все права защищены.</p>
+    <div class="social-icons mb-3">
+      <a href="#" class="bi bi-facebook"></a>
+      <a href="#" class="bi bi-twitter"></a>
+      <a href="#" class="bi bi-instagram"></a>
+    </div>
+    <p>
+      Мы используем cookie файлы для улучшения работы нашего сайта.
+      <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#cookiePolicyModal">Подробнее</a>
+    </p>
+    <p>
+      Согласие на обработку персональных данных в соответствии с
+      <a href="#" class="text-white" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">ФЗ-152 о персональных данных</a>.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Модальное окно: Cookie Policy -->
+<div class="modal fade" id="cookiePolicyModal" tabindex="-1" aria-labelledby="cookiePolicyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cookiePolicyModalLabel">Политика использования cookie</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <p>Мы используем cookie-файлы для обеспечения корректной работы сайта, аналитики и персонализации контента.</p>
+        <p>Вы можете отключить cookie в настройках браузера. Однако это может повлиять на функциональность сайта.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Privacy Policy -->
+<div class="modal fade" id="privacyPolicyModal" tabindex="-1" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="privacyPolicyModalLabel">Политика конфиденциальности</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <p>Мы обрабатываем персональные данные в соответствии с Федеральным законом РФ №152-ФЗ.</p>
+        <p>Собранные данные используются только для обработки заказов и улучшения сервиса. Мы не передаём данные третьим лицам без вашего согласия.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

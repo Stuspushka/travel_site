@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Подтверждение заявки</title>
+{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+  <div class="container text-center">
+    <h2 class="mb-4">Спасибо за вашу заявку!</h2>
+    <p>Ваша заявка на тур успешно оформлена. Мы свяжемся с вами в ближайшее время.</p>
+    <a href="{% url 'profile' %}" class="btn btn-primary">Перейти в личный кабинет</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}
+<title>{{ tour.title }}</title>
+{% endblock %}
+
+{% block content %}
+<section class="py-5" id="tour-details">
+    <div class="container">
+        <!-- Название тура -->
+        <h2 class="text-center mb-4">{{ tour.title }}</h2>
+
+        <div class="row g-4">
+            <!-- Изображение тура -->
+            <div class="col-lg-6">
+                <img src="{{ tour.image.url }}" alt="{{ tour.title }}" class="img-fluid rounded shadow">
+            </div>
+
+            <!-- Информация о туре -->
+            <div class="col-lg-6">
+                <div class="bg-light p-4 rounded shadow-sm h-100 d-flex flex-column">
+                    <h4>Описание</h4>
+                    <p>{{ tour.content }}</p>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_to_cart' tour.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Забронировать тур</button>
+                    </form>
+                    {% else %}
+                    <a href="#booking" data-bs-toggle="modal" data-bs-target="#bookingModal"
+                       class="btn btn-primary w-100 mt-3">Забронировать тур</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="mb-3">
+                <h5 class="mb-1">Категория тура:</h5>
+                <span class="badge bg-primary fs-6">{{ tour.category }}</span>
+            </div>
+        </div>
+    </div>
+    {% if not user.is_authenticated %}
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bookingModalLabel">Вы не авторизированны</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Для того чтобы забронировать тур, необходимо зарегистрироваться</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'login' %}" class="btn btn-primary">Войти</a>
+                    <a href="{% url 'registr' %}" class="btn btn-primary">Зарегистрироваться</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

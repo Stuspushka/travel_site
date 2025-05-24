@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>Корзина</title>
+{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="mb-4 text-center">Ваша корзина</h2>
+
+    {% if cart.items.all %}
+      <div class="row g-4">
+        {% for item in cart.items.all %}
+        <div class="col-12">
+          <div class="card shadow-sm p-3 d-flex flex-row align-items-center justify-content-between">
+            <div>
+              <h5>{{ item.tour.title }}</h5>
+              <p class="mb-1">Цена: {{ item.tour.price }}₽</p>
+              <p class="mb-1">Количество: {{ item.quantity }}</p>
+              <p><strong>Сумма: {{ item.total_price }}₽</strong></p>
+            </div>
+
+            <form method="post" class="d-flex gap-2 align-items-center">
+              {% csrf_token %}
+              <input type="hidden" name="item_id" value="{{ item.id }}">
+              <button name="action" value="decrease" class="btn btn-outline-secondary">-</button>
+              <button name="action" value="increase" class="btn btn-outline-secondary">+</button>
+              <button name="action" value="remove" class="btn btn-danger">Удалить</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="text-end mt-4">
+        <h4>Итоговая сумма: <strong>{{ cart.total_price }}₽</strong></h4>
+        <a href="{% url 'booking' %}" class="btn btn-success mt-2">Перейти к оформлению</a>
+      </div>
+    {% else %}
+      <p class="text-center">Ваша корзина пуста.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
